@@ -1,0 +1,100 @@
+{
+"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+"contentVersion": "1.0.0.0",
+"parameters": {
+    "subscriptionId": {
+        "type": "String"
+    },
+    "resourceGroupName": {
+        "type": "String"
+    },
+    "name": {
+        "type": "String"
+    },
+    "location": {
+        "type": "String"
+    },
+    "hostingPlanName": {
+        "type": "String"
+    }
+},
+"variables": {},
+"resources": [
+    {
+        "type": "Microsoft.Web/sites",
+        "apiVersion": "2018-11-01",
+        "name": "[parameters('name')]",
+        "location": "[parameters('location')]",
+        "dependsOn": [
+            "[concat('Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]"
+        ],
+        "tags": {},
+        "properties": {
+            "name": "[parameters('name')]",
+            "siteConfig": {
+                "appSettings": [],
+                "metadata": [
+                    {
+                        "name": "CURRENT_STACK",
+                        "value": "dotnet"
+                    }
+                ],
+                "phpVersion": "OFF",
+                "netFrameworkVersion": "v4.0",
+                "alwaysOn": false,
+                "ftpsState": "FtpsOnly"
+            },
+            "serverFarmId": "[concat('/subscriptions/', parameters('subscriptionId'),'/resourcegroups/', parameters('resourceGroupName'), '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
+            "clientAffinityEnabled": true,
+            "virtualNetworkSubnetId": null,
+            "httpsOnly": true,
+            "publicNetworkAccess": "Enabled"
+        },
+        "resources": [
+            {
+                "type": "Microsoft.Web/sites/basicPublishingCredentialsPolicies",
+                "apiVersion": "2022-09-01",
+                "name": "[concat(parameters('name'), '/scm')]",
+                "dependsOn": [
+                    "[resourceId('Microsoft.Web/Sites', parameters('name'))]"
+                ],
+                "properties": {
+                    "allow": true
+                }
+            },
+            {
+                "type": "Microsoft.Web/sites/basicPublishingCredentialsPolicies",
+                "apiVersion": "2022-09-01",
+                "name": "[concat(parameters('name'), '/ftp')]",
+                "dependsOn": [
+                    "[resourceId('Microsoft.Web/Sites', parameters('name'))]"
+                ],
+                "properties": {
+                    "allow": true
+                }
+            }
+        ]
+    },
+    {
+        "type": "Microsoft.Web/serverfarms",
+        "apiVersion": "2018-11-01",
+        "name": "[parameters('hostingPlanName')]",
+        "location": "[parameters('location')]",
+        "dependsOn": [],
+        "tags": {},
+        "sku": {
+            "Tier": "Basic",
+            "Name": "B1"
+        },
+        "kind": "",
+        "properties": {
+            "name": "[parameters('hostingPlanName')]",
+            "workerSize": "0",
+            "workerSizeId": "0",
+            "numberOfWorkers": "1",
+            "zoneRedundant": false
+        }
+     }
+  ] 
+}
+ 
