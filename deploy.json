@@ -8,23 +8,7 @@
             "name": "[parameters('appName')]",
             "location": "[parameters('location')]",
             "properties": {
-                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', 'appServicePlanName')]"
-            },
-            "dependsOn": [
-                "[resourceId('Microsoft.Web/serverfarms', 'appServicePlanName')]"
-            ]
-        },
-        {
-            "type": "Microsoft.Web/serverfarms",
-            "apiVersion": "2021-02-01",
-            "name": "appServicePlanName",
-            "location": "[parameters('location')]",
-            "sku": {
-                "name": "F1",
-                "tier": "Free",
-                "size": "F1",
-                "family": "F",
-                "capacity": 1
+                "serverFarmId": null
             }
         },
         {
