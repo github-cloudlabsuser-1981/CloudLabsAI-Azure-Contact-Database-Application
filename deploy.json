@@ -13,33 +13,54 @@
       "metadata": {
         "description": "Name of the App Service Plan."
       }
+    },
+    "location": {
+      "type": "string",
+      "metadata": {
+        "description": "Location for all resources."
+      }
     }
+  },
+  "variables": {
+    "resourceGroupName": "GitHub-Copilot-Challenges",
+    "appServicePlanSKU": "F1",
+    "appServicePlanTier": "Free"
   },
   "resources": [
     {
-      "apiVersion": "2018-11-01",
-      "name": "GitHub-Copilot-Challenges",
-      "type": "Microsoft.Web/sites",
-      "location": "[resourceGroup('GitHub-Copilot-Challenges').location]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]"
-      ],
-      "properties": {
-        "name": "GitHub-Copilot-Challenges",
-        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]"
-      }
+      "apiVersion": "2018-05-01",
+      "type": "Microsoft.Resources/resourceGroups",
+      "name": "[variables('resourceGroupName')]",
+      "location": "[parameters('location')]",
+      "properties": {}
     },
     {
       "apiVersion": "2018-11-01",
       "name": "[parameters('appServicePlanName')]",
       "type": "Microsoft.Web/serverfarms",
-      "location": "[resourceGroup('GitHub-Copilot-Challenges').location]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))]"
+      ],
       "properties": {
         "name": "[parameters('appServicePlanName')]",
         "sku": {
-          "name": "S1",
-          "capacity": 1
+          "Tier": "[variables('appServicePlanTier')]",
+          "Name": "[variables('appServicePlanSKU')]"
         }
+      }
+    },
+    {
+      "apiVersion": "2018-11-01",
+      "name": "[parameters('appName')]",
+      "type": "Microsoft.Web/sites",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]"
+      ],
+      "properties": {
+        "name": "[parameters('appName')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]"
       }
     }
   ]

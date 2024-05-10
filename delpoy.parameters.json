@@ -3,10 +3,13 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "appName": {
-      "value": "contact_database_application"
+      "value": "ContactDatabaseApp"
     },
     "appServicePlanName": {
-      "value": "FreeAppServicePlan"
+      "value": "ContactDatabaseAppServicePlan"
+    },
+    "location": {
+      "value": "eastus" // Replace with your desired location
     }
   }
 }
