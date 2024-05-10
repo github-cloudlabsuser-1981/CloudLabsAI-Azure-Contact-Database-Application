@@ -2,47 +2,44 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "webAppName": {
+    "appName": {
       "type": "string",
-      "defaultValue": "GitHub-Copilot-Challenges",
       "metadata": {
-        "description": "Name for the Web App"
+        "description": "Name of the Web App."
       }
     },
-    "hostingPlanName": {
+    "appServicePlanName": {
       "type": "string",
       "metadata": {
-        "description": "Name for the App Service plan"
-      }
-    },
-    "location": {
-      "type": "string",
-      "metadata": {
-        "description": "Location for all resources"
+        "description": "Name of the App Service Plan."
       }
     }
   },
   "resources": [
     {
-      "type": "Microsoft.Web/serverfarms",
-      "apiVersion": "2020-06-01",
-      "name": "[parameters('hostingPlanName')]",
-      "location": "[parameters('location')]",
-      "sku": {
-        "name": "B1",
-        "capacity": 1
+      "apiVersion": "2018-11-01",
+      "name": "[parameters('appName')]",
+      "type": "Microsoft.Web/sites",
+      "location": "[resourceGroup('GitHub-Copilot-Challenges').location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]"
+      ],
+      "properties": {
+        "name": "[parameters('appName')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]"
       }
     },
     {
-      "type": "Microsoft.Web/sites",
-      "apiVersion": "2020-06-01",
-      "name": "[parameters('webAppName')]",
-      "location": "[parameters('location')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Web/serverfarms', parameters('hostingPlanName'))]"
-      ],
+      "apiVersion": "2018-11-01",
+      "name": "[parameters('appServicePlanName')]",
+      "type": "Microsoft.Web/serverfarms",
+      "location": "[resourceGroup('GitHub-Copilot-Challenges').location]",
       "properties": {
-        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('hostingPlanName'))]"
+        "name": "[parameters('appServicePlanName')]",
+        "sku": {
+          "name": "S1",
+          "capacity": 1
+        }
       }
     }
   ]
